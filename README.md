@@ -1,3 +1,5 @@
+The repo contains a forked version of Gridster.js, providing responsive mode to it.
+
 Gridster.js
 ===========
 
