@@ -1,4 +1,4 @@
-/*! gridster.js - v0.5.6 - 2015-04-02
+/*! gridster.js - v0.5.6 - 2015-04-17
 * http://gridster.net/
 * Copyright (c) 2015 ducksboard; Licensed MIT */
 
@@ -618,15 +618,10 @@
 
 
     fn.set_limits = function(container_width) {
-        console.log('set_limits called with container_width ', container_width);
-
         var $limitContainer = this.options.scrollElement || this.$container;
         container_width = $limitContainer.width();
         this.player_max_left = (container_width - this.player_width +
             - this.options.offset_left);
-
-        console.log('$limitContainer ', $limitContainer, ' width ', $limitContainer.width());
-        console.log('container_width ', container_width, ' player_width ', this.player_width, ' offset_left ', this.options.offset_left, ' player_max_left ', this.player_max_left);
 
         this.options.container_width = container_width;
 
@@ -754,8 +749,6 @@
     fn.on_dragstart = function(e) {
         e.preventDefault();
 
-        console.log('Draggable::on_dragstart this.$container ', this.$container);
-
         if (this.is_dragging) { return this; }
 
         this.drag_start = this.is_dragging = true;
@@ -801,9 +794,6 @@
                 'top' : data.position.top
             });
         }
-
-        // TODO where the hell are the constraints handled in here
-        // is it the window width limitation cause it seems to work out of the box for fullsize grids
 
         var last_position = this.last_position || data.position;
         data.prev_position = last_position;
