@@ -1,4 +1,4 @@
-/*! gridster.js - v0.5.6 - 2015-04-17
+/*! gridster.js - v0.5.6 - 2015-05-01
 * http://gridster.net/
 * Copyright (c) 2015 ducksboard; Licensed MIT */
 
@@ -889,6 +889,8 @@
         widget_base_dimensions: [400, 225],
         extra_rows: 0,
         extra_cols: 0,
+        margin_left: 0,
+        margin_top: 0,
         min_cols: 1,
         max_cols: Infinity,
         min_rows: 15,
@@ -1966,8 +1968,8 @@
         }
 
         var abs_offset = {
-            left: ui.position.left + this.baseX,
-            top: ui.position.top + this.baseY
+            left: ui.position.left + this.baseX - this.options.margin_left,
+            top: ui.position.top + this.baseY - this.options.margin_top
         };
 
         // auto grow cols
@@ -2019,8 +2021,8 @@
         this.$helper.add(this.$player).add(this.$wrapper)
             .removeClass('dragging');
 
-        ui.position.left = ui.position.left + this.baseX;
-        ui.position.top = ui.position.top + this.baseY;
+        ui.position.left = ui.position.left + this.baseX - this.options.margin_left;
+        ui.position.top = ui.position.top + this.baseY - this.options.margin_top;
         this.colliders_data = this.collision_api.get_closest_colliders(
             ui.position);
 
@@ -2670,7 +2672,7 @@
         // Prevents widgets go out of the grid
         var right_col = (col + phgd.size_x - 1);
         if (right_col > this.cols) {
-            col = col - (right_col - col);
+            col = this.cols - phgd.size_x + 1;
         }
 
         var moved_down = this.placeholder_grid_data.row < row;
@@ -3673,6 +3675,8 @@
             opts.widget_base_dimensions[0];
         opts.min_widget_height = (opts.widget_margins[1] * 2) +
             opts.widget_base_dimensions[1];
+        opts.margin_left || (opts.margin_left = this.options.margin_left);
+        opts.margin_top || (opts.margin_top = this.options.margin_top);
 
         // don't duplicate stylesheets for the same configuration
         var serialized_opts = $.param(opts);
@@ -3688,7 +3692,8 @@
             styles += (opts.namespace + ' [data-col="'+ (i + 1) + '"] { left:' +
                 ((i * opts.widget_base_dimensions[0]) +
                 (i * opts.widget_margins[0]) +
-                ((i + 1) * opts.widget_margins[0])) + 'px; }\n');
+                ((i + 1) * opts.widget_margins[0]) +
+                opts.margin_left) + 'px; }\n');
         }
 
         /* generate CSS styles for rows */
@@ -3696,7 +3701,8 @@
             styles += (opts.namespace + ' [data-row="' + (i + 1) + '"] { top:' +
                 ((i * opts.widget_base_dimensions[1]) +
                 (i * opts.widget_margins[1]) +
-                ((i + 1) * opts.widget_margins[1]) ) + 'px; }\n');
+                ((i + 1) * opts.widget_margins[1]) +
+                opts.margin_top) + 'px; }\n');
         }
 
         for (var y = 1; y <= opts.rows; y++) {
@@ -3879,8 +3885,8 @@
     */
     fn.recalculate_faux_grid = function() {
         var aw = this.$wrapper.width();
-        this.baseX = ($(window).width() - aw) / 2;
-        this.baseY = this.$wrapper.offset().top;
+        this.baseX = ($(window).width() - aw) / 2 + this.options.margin_left;
+        this.baseY = this.$wrapper.offset().top + this.options.margin_top;
 
         $.each(this.faux_grid, $.proxy(function(i, coords) {
             this.faux_grid[i] = coords.update({
@@ -3956,8 +3962,8 @@
 
         this.rows = Math.max(max_rows, this.options.min_rows);
 
-        this.baseX = ($(window).width() - aw) / 2;
-        this.baseY = this.$wrapper.offset().top;
+        this.baseX = ($(window).width() - aw) / 2 + this.options.margin_left;
+        this.baseY = this.$wrapper.offset().top + this.options.margin_top;
 
         if (this.options.autogenerate_stylesheet) {
             this.generate_stylesheet();
