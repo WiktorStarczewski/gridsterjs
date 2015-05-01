@@ -96,13 +96,9 @@
 
     fn.init = function() {
         var pos = this.$container.css('position');
-        this.calculate_dimensions();
         this.$container.css('position', pos === 'static' ? 'relative' : pos);
         this.disabled = false;
         this.events();
-
-        this.$scrollElement.bind(this.nsEvent('resize'),
-            throttle($.proxy(this.calculate_dimensions, this), 200));
     };
 
     fn.nsEvent = function(ev) {
@@ -237,7 +233,7 @@
         var mouse_prev_zone = min_window_pos + area_size;  // up/left
 
         var abs_mouse_pos = min_window_pos + data.pointer[dir_prop];
-        var max_player_pos = doc_size - window_size + player_size; // : window_size + player_size;
+        var max_player_pos = (doc_size - window_size + player_size);
 
         if (abs_mouse_pos >= mouse_next_zone) {
             next_scroll = scroll_offset + scroll_inc;
@@ -251,6 +247,7 @@
         if (abs_mouse_pos <= mouse_prev_zone) {
             next_scroll = scroll_offset - scroll_inc;
 
+            // Ensure it is possible to reach the top/left boundary
             if (next_scroll < 0) {
                 scroll_inc = scroll_offset;
                 next_scroll = 0;
@@ -267,12 +264,6 @@
     fn.manage_scroll = function(data) {
         this.scroll_in('x', data);
         this.scroll_in('y', data);
-    };
-
-
-    fn.calculate_dimensions = function(e) {
-        this.window_height = $window.height();
-        this.window_width = $window.width();
     };
 
 
